@@ -1,5 +1,5 @@
 ﻿# указывайте последнюю доступную вам версию CMake
-cmake_minimum_required(VERSION 3.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
 # название проекта
 project(Algorithms-and-Data-Structures)
