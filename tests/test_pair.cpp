@@ -1,4 +1,4 @@
-//Copyright 2024 Anvar
+// Copyright 2024 Anvar
 #include "../gtest/gtest.h"
 #include "../lib_pair/pair.h"
 

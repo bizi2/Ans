@@ -1,4 +1,4 @@
-//Copyright 2024 Anvar
+// Copyright 2024 Anvar
 #define FRIEND_TEST_CASES
 #include "../gtest/gtest.h"
 #include "../lib_dmassive/archive.h"
@@ -79,7 +79,7 @@ TEST(Test_TDMassive, remove_by_index_test) {
     m.push_front(4);
     m.push_front(5);
     EXPECT_EQ(m.size(), 5);
-    m.remove_by_index(1);  // Удаляем элемент с индексом 1   
+    m.remove_by_index(1);
 }
 
 TEST(Test_TDMassive, reserve) {
