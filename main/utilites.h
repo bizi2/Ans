@@ -7,8 +7,9 @@
 namespace InputSystem {
 enum InsertMode { Back, Front, OneValue, SeveralValues };
 enum RemoveMode {
-    Back1,Front1,All, First,Last, OneValue1,SeveralValues1 };
+    Back1, Front1, All, First, Last, OneValue1, SeveralValues1 };
 enum FindMode { FAll, FFirst, FLast };
+
 template <typename T>
 T* remove(const size_t& n, const size_t& pos,
     const InputSystem::RemoveMode& mode) noexcept {
@@ -46,7 +47,9 @@ T* remove(const size_t& n, const size_t& pos,
                     << "Your choose: ";
         std::cin >> user;
         mode = (user == 1) ? OneValue1 : SeveralValues1;
-    } if (mode == First || mode == Last || mode == All) {
+    } 
+
+    if (mode == First || mode == Last || mode == All) {
         value = new T[1];
         std::cout << "Input value for remove: ";
         std::cin >> value[0];
@@ -62,7 +65,6 @@ T* remove(const size_t& n, const size_t& pos,
     }
     return value;
 }
-
 template <typename T>
 T* insert(const size_t& n, const size_t& pos,
     const InputSystem::InsertMode& mode) noexcept {
@@ -105,7 +107,6 @@ T* insert(const size_t& n, const size_t& pos,
     }
     return value;
 }
-
 template <typename T>
 T* find(const InputSystem::FindMode& mode) noexcept {
     T* value = nullptr;
