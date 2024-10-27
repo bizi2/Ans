@@ -6,21 +6,19 @@
 
 namespace InputSystem {
 enum InsertMode { Back, Front, OneValue, SeveralValues };
-enum RemoveMode {
-    Back1, Front1, All, First, Last, OneValue1, SeveralValues1 };
+enum RemoveMode { Back1, Front1, All, First, Last, OneValue1, SeveralValues1 };
 enum FindMode { FAll, FFirst, FLast };
 
 template <typename T>
-T* remove(const size_t& n, const size_t& pos,
-    const InputSystem::RemoveMode& mode) noexcept {
+T* remove(const size_t& n, const size_t& pos, const InputSystem::RemoveMode& mode) noexcept {
     T* value = nullptr;
     int user;
     std::cout << "Choose remove mode:\n"
-                << "1 - back,\n"
-                << "2 - front,\n"
-                << "3 - by value,\n"
-                << "4 - at given position.\n"
-                << "Your choose: ";
+                 << "1 - back,\n"
+                 << "2 - front,\n"
+                 << "3 - by value,\n"
+                 << "4 - at given position.\n"
+                 << "Your choose: ";
     std::cin >> user;
     if (user == 1) {
         mode = Back1;
@@ -28,10 +26,10 @@ T* remove(const size_t& n, const size_t& pos,
         mode = Front1;
     } else if (user == 3) {
         std::cout << "Remove by value:\n"
-                    << "1 - first coincidence,\n"
-                    << "2 - last coincidence,\n"
-                    << "3 - all coincidence.\n"
-                    << "Your choose: ";
+                     << "1 - first coincidence,\n"
+                     << "2 - last coincidence,\n"
+                     << "3 - all coincidence.\n"
+                     << "Your choose: ";
         std::cin >> user;
         if (user == 1) {
             mode = First;
@@ -42,9 +40,9 @@ T* remove(const size_t& n, const size_t& pos,
         }
     } else if (user == 4) {
         std::cout << "How many values need to be removed:\n"
-                    << "1 - one value,\n"
-                    << "2 - several values.\n"
-                    << "Your choose: ";
+                     << "1 - one value,\n"
+                     << "2 - several values.\n"
+                     << "Your choose: ";
         std::cin >> user;
         mode = (user == 1) ? OneValue1 : SeveralValues1;
     } 
@@ -65,16 +63,16 @@ T* remove(const size_t& n, const size_t& pos,
     }
     return value;
 }
+
 template <typename T>
-T* insert(const size_t& n, const size_t& pos,
-    const InputSystem::InsertMode& mode) noexcept {
+T* insert(const size_t& n, const size_t& pos, const InputSystem::InsertMode& mode) noexcept {
     T* value = nullptr;
     int user;
     std::cout << "Choose insert mode:\n"
-                << "1 - to the back,\n"
-                << "2 - to the front,\n"
-                << "3 - at given position.\n"
-                << "Your choose: ";
+                 << "1 - to the back,\n"
+                 << "2 - to the front,\n"
+                 << "3 - at given position.\n"
+                 << "Your choose: ";
     std::cin >> user;
     if (user == 1) {
         mode = Back;
@@ -82,9 +80,9 @@ T* insert(const size_t& n, const size_t& pos,
         mode = Front;
     } else if (user == 3) {
         std::cout << "How many values need to insert:\n"
-                    << "1 - one value,\n"
-                    << "2 - several values.\n"
-                    << "Your choose: ";
+                     << "1 - one value,\n"
+                     << "2 - several values.\n"
+                     << "Your choose: ";
         std::cin >> user;
         mode = (user == 1) ? OneValue : SeveralValues;
     }
@@ -107,15 +105,16 @@ T* insert(const size_t& n, const size_t& pos,
     }
     return value;
 }
+
 template <typename T>
 T* find(const InputSystem::FindMode& mode) noexcept {
     T* value = nullptr;
     int user;
     std::cout << "Choose find mode:\n"
-                << "1 - find all,\n"
-                << "2 - find first,\n"
-                << "3 - find last.\n"
-                << "Your choose: ";
+                 << "1 - find all,\n"
+                 << "2 - find first,\n"
+                 << "3 - find last.\n"
+                 << "Your choose: ";
     std::cin >> user;
     if (user == 1) {
         mode = FAll;
@@ -130,7 +129,7 @@ T* find(const InputSystem::FindMode& mode) noexcept {
         std::cin >> value[0];
     } else if (mode == FAll) {
         value = new T[5];
-        std::cout << "Input values for find(max 5) ('.' for exit): ";
+        std::cout << "Input values for find (max 5) ('.' for exit): ";
         for (size_t i = 0; i < 5; i++) {
             std::cin >> value[i];
             if (value[i] == '.') {
@@ -152,8 +151,7 @@ static void setCursor(int column, int line) {
 
 static void getCursor(int* column, int* line) noexcept {
     CONSOLE_SCREEN_BUFFER_INFO csbi;
-    if (GetConsoleScreenBufferInfo(
-        GetStdHandle(STD_OUTPUT_HANDLE), &csbi)) {
+    if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)) {
         if (column != nullptr) {
             *column = csbi.dwCursorPosition.X;
         }
@@ -169,18 +167,17 @@ static void getCursor(int* column, int* line) noexcept {
         }
     }
 }
+
 static void insert() noexcept {
     std::cout << "Done." << std::endl;
 }
+
 static void remove() noexcept {
     std::cout << "Done." << std::endl;
 }
 
 template <typename T>
-static void find(size_t* values,
-    const InputSystem::FindMode mode,
-    const TDMassive<T>& archive,
-    size_t count) noexcept {
+static void find(size_t* values, const InputSystem::FindMode mode, const TDMassive<T>& archive, size_t count) noexcept {
     system("cls");
     const auto& data = archive.data();
     std::cout << "Matches found: ";
@@ -197,6 +194,7 @@ static void find(size_t* values,
         }
     }
 }
+
 template <typename T>
 void show(const TDMassive<T>& archive) noexcept {
     std::cout << "Archive: { ";
