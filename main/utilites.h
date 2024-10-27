@@ -6,14 +6,9 @@
 
 namespace InputSystem {
 enum InsertMode { Back, Front, OneValue, SeveralValues };
-enum RemoveMode { 
-    Back1, 
-    Front1, 
-    All, First, 
-    Last, OneValue1, 
-    SeveralValues1 };
+enum RemoveMode {
+    Back1,Front1,All, First,Last, OneValue1,SeveralValues1 };
 enum FindMode { FAll, FFirst, FLast };
-
 template <typename T>
 T* remove(const size_t& n, const size_t& pos,
     const InputSystem::RemoveMode& mode) noexcept {
@@ -28,11 +23,9 @@ T* remove(const size_t& n, const size_t& pos,
     std::cin >> user;
     if (user == 1) {
         mode = Back1;
-    } 
-    else if (user == 2) {
+    } else if (user == 2) {
         mode = Front1;
-    } 
-    else if (user == 3) {
+    } else if (user == 3) {
         std::cout << "Remove by value:\n"
                     << "1 - first coincidence,\n"
                     << "2 - last coincidence,\n"
@@ -41,28 +34,23 @@ T* remove(const size_t& n, const size_t& pos,
         std::cin >> user;
         if (user == 1) {
             mode = First;
-        } 
-        else if (user == 2) {
+        } else if (user == 2) {
             mode = Last;
-        } 
-        else if (user == 3) {
+        } else if (user == 3) {
             mode = All;
         }
-    } 
-    else if (user == 4) {
+    } else if (user == 4) {
         std::cout << "How many values need to be removed:\n"
                     << "1 - one value,\n"
                     << "2 - several values.\n"
                     << "Your choose: ";
         std::cin >> user;
         mode = (user == 1) ? OneValue1 : SeveralValues1;
-    }
-    if (mode == First || mode == Last || mode == All) {
+    } if (mode == First || mode == Last || mode == All) {
         value = new T[1];
         std::cout << "Input value for remove: ";
         std::cin >> value[0];
-    } 
-    else if (mode == SeveralValues1) {
+    } else if (mode == SeveralValues1) {
         std::cout << "Input number of values for remove: ";
         std::cin >> n;
         value = new T[n];
@@ -88,11 +76,9 @@ T* insert(const size_t& n, const size_t& pos,
     std::cin >> user;
     if (user == 1) {
         mode = Back;
-    } 
-    else if (user == 2) {
+    } else if (user == 2) {
         mode = Front;
-    } 
-    else if (user == 3) {
+    } else if (user == 3) {
         std::cout << "How many values need to insert:\n"
                     << "1 - one value,\n"
                     << "2 - several values.\n"
@@ -104,8 +90,7 @@ T* insert(const size_t& n, const size_t& pos,
         value = new T[1];
         std::cout << "Input value for insert: ";
         std::cin >> value[0];
-    } 
-    else if (mode == SeveralValues) {
+    } else if (mode == SeveralValues) {
         std::cout << "Input number of values for insert: ";
         std::cin >> n;
         value = new T[n];
@@ -133,19 +118,16 @@ T* find(const InputSystem::FindMode& mode) noexcept {
     std::cin >> user;
     if (user == 1) {
         mode = FAll;
-    } 
-    else if (user == 2) {
+    } else if (user == 2) {
         mode = FFirst;
-    } 
-    else if (user == 3) {
+    } else if (user == 3) {
         mode = FLast;
     }
     if (mode == FFirst || mode == FLast) {
         value = new T;
         std::cout << "Input value for find: ";
         std::cin >> value[0];
-    } 
-    else if (mode == FAll) {
+    } else if (mode == FAll) {
         value = new T[5];
         std::cout << "Input values for find(max 5) ('.' for exit): ";
         for (size_t i = 0; i < 5; i++) {
@@ -214,7 +196,6 @@ static void find(size_t* values,
         }
     }
 }
-
 template <typename T>
 void show(const TDMassive<T>& archive) noexcept {
     std::cout << "Archive: { ";

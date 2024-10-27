@@ -26,11 +26,11 @@ class TPair {
     TPair operator+(const TPair& pair) const noexcept;
     bool operator==(const TPair& pair) const noexcept;
     friend TPair operator-(
-        const TPair<T1, T2>& pair1, 
+        const TPair<T1, T2>& pair1,
         const TPair<T1, T2>& pair2) noexcept;
     std::string to_string() const noexcept;
     friend std::ostream& operator<<<T1, T2>(
-        std::ostream& out, 
+        std::ostream& out,
         const TPair<T1, T2>& pair) noexcept;
 };
 template <class T1, class T2>
@@ -84,7 +84,7 @@ bool TPair<T1, T2>::operator==(
 // Дружественная функция для вычитания, возвращающая копию объекта
 template <class T1, class T2>
 TPair<T1, T2> operator-(
-    const TPair<T1, T2>& pair1, 
+    const TPair<T1, T2>& pair1,
     const TPair<T1, T2>& pair2) noexcept {
     TPair<T1, T2> temp(pair1);
     temp._first -= pair2._first;
@@ -98,7 +98,7 @@ std::string TPair<T1, T2>::to_string(
 }
 template <class T1, class T2>
 std::ostream& operator<< <T1, T2>(
-    std::ostream& out, 
+    std::ostream& out,
     const TPair<T1, T2>& pair) noexcept {
     out << pair.to_string();
     return out;
