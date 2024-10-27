@@ -6,11 +6,14 @@
 
 namespace InputSystem {
 enum InsertMode { Back, Front, OneValue, SeveralValues };
-enum RemoveMode { Back1, Front1, All, First, Last, OneValue1, SeveralValues1 };
+enum RemoveMode {
+    Back1, Front1, All, First, Last, OneValue1, SeveralValues1
+};
 enum FindMode { FAll, FFirst, FLast };
 
 template <typename T>
-T* remove(const size_t& n, const size_t& pos, const InputSystem::RemoveMode& mode) noexcept {
+T* remove(const size_t& n, const size_t& pos,
+           const InputSystem::RemoveMode& mode) noexcept {
     T* value = nullptr;
     int user;
     std::cout << "Choose remove mode:\n"
@@ -65,7 +68,8 @@ T* remove(const size_t& n, const size_t& pos, const InputSystem::RemoveMode& mod
 }
 
 template <typename T>
-T* insert(const size_t& n, const size_t& pos, const InputSystem::InsertMode& mode) noexcept {
+T* insert(const size_t& n, const size_t& pos,
+           const InputSystem::InsertMode& mode) noexcept {
     T* value = nullptr;
     int user;
     std::cout << "Choose insert mode:\n"
@@ -177,7 +181,8 @@ static void remove() noexcept {
 }
 
 template <typename T>
-static void find(size_t* values, const InputSystem::FindMode mode, const TDMassive<T>& archive, size_t count) noexcept {
+static void find(size_t* values, const InputSystem::FindMode mode,
+                 const TDMassive<T>& archive, size_t count) noexcept {
     system("cls");
     const auto& data = archive.data();
     std::cout << "Matches found: ";
