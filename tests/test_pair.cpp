@@ -1,4 +1,5 @@
-#include "gtest.h"
+//Copyright 2024 Anvar
+#include "../gtest/gtest.h"
 #include "../lib_pair/pair.h"
 
 TEST(TPairTest, SetMethods) {
@@ -31,8 +32,3 @@ TEST(TPairTest, EqualityOperator) {
     EXPECT_TRUE(pair1 == pair2);
     EXPECT_FALSE(pair1 == pair3);
 }
-
-
-
-
-

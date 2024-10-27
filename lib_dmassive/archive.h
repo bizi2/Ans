@@ -1,3 +1,4 @@
+//Copyright 2024 Anvar
 #pragma once
 #include <iostream>
 #include <utility>
@@ -428,8 +429,8 @@ TDMassive<T>& TDMassive<T>::remove_by_index(size_t pos) {
     if (pos >= _size) {
         throw std::out_of_range("Index out of range");
     }
-    _states[pos] = State::deleted; // Помечаем элемент как удаленный
-    _deleted++; // Увеличиваем счетчик удаленных элементов
+    _states[pos] = State::deleted;  // Помечаем элемент как удаленный
+    _deleted++;  // Увеличиваем счетчик удаленных элементов
     return *this;
 }
 

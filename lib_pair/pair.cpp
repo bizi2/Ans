@@ -1,3 +1,3 @@
-// Copyright 2024 Marina Usova
+// Copyright 2024 Anvar
 
 #include "../lib_pair/pair.h"

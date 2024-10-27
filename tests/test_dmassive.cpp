@@ -1,5 +1,6 @@
+//Copyright 2024 Anvar
 #define FRIEND_TEST_CASES
-#include "gtest.h"
+#include "../gtest/gtest.h"
 #include "../lib_dmassive/archive.h"
 TEST(Test_TDMassive, empty) {
     TDMassive<int> m;
@@ -77,10 +78,8 @@ TEST(Test_TDMassive, remove_by_index_test) {
     m.push_front(3);
     m.push_front(4);
     m.push_front(5);
-
     EXPECT_EQ(m.size(), 5);
-    m.remove_by_index(1); // Удаляем элемент с индексом 1
-    
+    m.remove_by_index(1);  // Удаляем элемент с индексом 1   
 }
 
 TEST(Test_TDMassive, reserve) {
@@ -105,12 +104,10 @@ TEST(Test_TDMassive, insert) {
     m.insert(1, 0);
     EXPECT_EQ(m.size(), 1);
     EXPECT_EQ(m.data()[0], 1);
-
     m.insert(2, 1);
     EXPECT_EQ(m.size(), 2);
     EXPECT_EQ(m.data()[0], 1);
     EXPECT_EQ(m.data()[1], 2);
-
     ASSERT_NO_THROW(m.insert(0, 0));
 }
 
@@ -141,7 +138,6 @@ TEST(Test_TDMassive, PushBack) {
     mass.push_back(1);
     mass.push_back(2);
     mass.push_back(3);
-
     EXPECT_EQ(mass.data()[0], 1);
     EXPECT_EQ(mass.data()[1], 2);
     EXPECT_EQ(mass.data()[2], 3);
@@ -153,7 +149,6 @@ TEST(Test_TDMassive, PushFront) {
     mass.push_front(1);
     mass.push_front(2);
     mass.push_front(3);
-
     EXPECT_EQ(mass.data()[0], 3);
     EXPECT_EQ(mass.data()[1], 2);
     EXPECT_EQ(mass.data()[2], 1);
@@ -165,16 +160,13 @@ TEST(Test_TDMassive, PopFront) {
     mass.push_back(1);
     mass.push_back(2);
     mass.push_back(3);
-
     mass.pop_front();
     EXPECT_EQ(mass.data()[0], 2);
     EXPECT_EQ(mass.data()[1], 3);
     EXPECT_EQ(mass.size(), 2);
-
     mass.pop_front();
     EXPECT_EQ(mass.data()[0], 3);
     EXPECT_EQ(mass.size(), 1);
-
     mass.pop_front();
     EXPECT_EQ(mass.size(), 0);
 }
@@ -190,16 +182,13 @@ TEST(Test_TDMassive, PopBack) {
     mass.push_back(1);
     mass.push_back(2);
     mass.push_back(3);
-
     mass.pop_back();
     EXPECT_EQ(mass.data()[0], 1);
     EXPECT_EQ(mass.data()[1], 2);
     EXPECT_EQ(mass.size(), 2);
-
     mass.pop_back();
     EXPECT_EQ(mass.data()[0], 1);
     EXPECT_EQ(mass.size(), 1);
-
     mass.pop_back();
     EXPECT_EQ(mass.size(), 0);
 }
@@ -216,7 +205,6 @@ TEST(Test_TDMassive, RemoveByIndex) {
     mass.push_back(1);
     mass.push_back(2);
     mass.push_back(3);
-
     mass.remove_by_index(1);
     EXPECT_EQ(mass.get_state(1), State::deleted);
 }
@@ -234,7 +222,6 @@ TEST(Test_TDMassive, Erase) {
     mass.push_back(1);
     mass.push_back(2);
     mass.push_back(3);
-
     mass.erase(1, 4);
     EXPECT_EQ(mass.get_state(1), State::deleted);
     EXPECT_EQ(mass.get_state(2), State::deleted);
@@ -251,7 +238,6 @@ TEST(Test_TDMassive, RemoveAll) {
     mass.push_back(2);
     mass.push_back(1);
     mass.push_back(3);
-
     mass.remove_all(1);
     EXPECT_EQ(mass.get_state(0), State::deleted);
     EXPECT_EQ(mass.get_state(2), State::deleted);
@@ -268,7 +254,6 @@ TEST(Test_TDMassive, RemoveFirst) {
     mass.push_back(2);
     mass.push_back(1);
     mass.push_back(3);
-
     mass.remove_first(1);
     EXPECT_EQ(mass.get_state(0), State::deleted);
 }
@@ -284,7 +269,6 @@ TEST(Test_TDMassive, RemoveLast) {
     mass.push_back(2);
     mass.push_back(1);
     mass.push_back(3);
-
     mass.remove_last(1);
     EXPECT_EQ(mass.get_state(2), State::deleted);
 }
@@ -300,7 +284,6 @@ TEST(Test_TDMassive, FindFirst) {
     mass.push_back(2);
     mass.push_back(1);
     mass.push_back(3);
-
     EXPECT_EQ(mass.find_first(1), 0);
     EXPECT_EQ(mass.find_first(2), 1);
     EXPECT_EQ(mass.find_first(3), 3);
@@ -312,7 +295,6 @@ TEST(Test_TDMassive, FindFirst_any_throw) {
     mass.push_back(2);
     mass.push_back(1);
     mass.push_back(3);
-
     ASSERT_ANY_THROW(mass.find_first(0));
 }
 
@@ -322,7 +304,6 @@ TEST(Test_TDMassive, FindLast) {
     mass.push_back(2);
     mass.push_back(1);
     mass.push_back(3);
-
     EXPECT_EQ(mass.find_last(1), 2);
     EXPECT_EQ(mass.find_last(2), 1);
     EXPECT_EQ(mass.find_last(3), 3);
@@ -334,7 +315,6 @@ TEST(Test_TDMassive, FindLast_any_throw) {
     mass.push_back(2);
     mass.push_back(1);
     mass.push_back(3);
-
     ASSERT_ANY_THROW(mass.find_last(0));
 }
 
@@ -344,18 +324,15 @@ TEST(Test_TDMassive, FindAll) {
     mass.push_back(2);
     mass.push_back(1);
     mass.push_back(3);
-
     size_t* result = mass.find_all(1);
     EXPECT_EQ(result[0], 2);
     EXPECT_EQ(result[1], 0);
     EXPECT_EQ(result[2], 2);
     delete[] result;
-
     result = mass.find_all(2);
     EXPECT_EQ(result[0], 1);
     EXPECT_EQ(result[1], 1);
     delete[] result;
-
     result = mass.find_all(3);
     EXPECT_EQ(result[0], 1);
     EXPECT_EQ(result[1], 3);
@@ -367,11 +344,9 @@ TEST(Test_TDMassive, Replace) {
     mass.push_back(1);
     mass.push_back(2);
     mass.push_back(3);
-
     mass.replace(1, 10);
     EXPECT_EQ(mass.data()[1], 10);
     EXPECT_EQ(mass.get_state(1), State::busy);
-
     mass.replace(0, 20);
     EXPECT_EQ(mass.data()[0], 20);
     EXPECT_EQ(mass.get_state(0), State::busy);
@@ -383,15 +358,12 @@ TEST(Test_TDMassive, OperatorBrackets) {
     mass.push_back(1);
     mass.push_back(2);
     mass.push_back(3);
-
     EXPECT_EQ(mass[0], 1);
     EXPECT_EQ(mass[1], 2);
     EXPECT_EQ(mass[2], 3);
-
     mass[0] = 10;
     mass[1] = 20;
     mass[2] = 30;
-
     EXPECT_EQ(mass[0], 10);
     EXPECT_EQ(mass[1], 20);
     EXPECT_EQ(mass[2], 30);
