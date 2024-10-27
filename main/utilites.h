@@ -212,4 +212,4 @@ void show(const TDMassive<T>& archive) noexcept {
     }
     std::cout << " }\n";
 }
-}
+}  // namespace OutputSystem
