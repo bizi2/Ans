@@ -48,7 +48,7 @@ T* remove(const size_t& n, const size_t& pos,
                      << "Your choose: ";
         std::cin >> user;
         mode = (user == 1) ? OneValue1 : SeveralValues1;
-    } 
+    }
 
     if (mode == First || mode == Last || mode == All) {
         value = new T[1];
@@ -212,4 +212,4 @@ void show(const TDMassive<T>& archive) noexcept {
     }
     std::cout << " }\n";
 }
-}
+}  // namespace OutputSystem
