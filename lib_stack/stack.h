@@ -1,6 +1,8 @@
 // Copyright 2024 Anvar
 
 
+#ifndef LIB_STACK_QUEUE_H_
+#define LIB_STACK_QUEUE_H_
 #include <iostream>
 #include "../lib_dmassive/archive.h"
 
@@ -78,4 +80,4 @@ template <typename T>
 void TStack<T>::print() const {
     _data.print();
 }
-
+#endif

@@ -1,3 +1,4 @@
+// Copyright 2024 Anvar
 #include <../gtest/gtest.h>
 #include "../lib_queue/queue.h"
 
@@ -13,7 +14,7 @@ TEST(TQueueTest, EnqueueAndFront) {
     queue.enqueue(1);
     queue.enqueue(2);
     queue.enqueue(3);
-    
+
     EXPECT_FALSE(queue.empty());
     EXPECT_EQ(queue.size(), 3);
     EXPECT_EQ(queue.front(), 1);

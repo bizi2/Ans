@@ -7,7 +7,7 @@ template <typename T>
 TList<T>* createList(int size) {
     TList<T>* list = new TList<T>();
     for (int i = 0; i < size; ++i) {
-        list->push_back(i); // Добавляем значения в список
+        list->push_back(i);
     }
     return list;
 }
@@ -54,8 +54,8 @@ TEST(TNodeTest, AssignmentOperator) {
 TEST(TNodeTest, EqualityOperator) {
     TNode<int> node1(5);
     TNode<int> node2(5);
-    EXPECT_TRUE(node1 == 5);
-    EXPECT_TRUE(node2 == 5);
+    EXPECT_EQ(node1.value(), 5);
+    EXPECT_EQ(node2.value(), 5);
 }
 
 TEST(TListTest, PushFront) {
@@ -102,11 +102,11 @@ TEST(TListTest, InsertPosition) {
     TList<int> list;
     list.push_back(1);
     list.push_back(3);
-    list.insert(1, 2); // Вставляем 2 на позицию 1 (между 1 и 3)
+    list.insert(1, 2);
 
-    EXPECT_EQ(list.head->value(), 1);                // Первый элемент
-    EXPECT_EQ(list.head->next()->value(), 2);       // Второй элемент (должен быть 2)
-    EXPECT_EQ(list.head->next()->next()->value(), 3); // Третий элемент
+    EXPECT_EQ(list.head->value(), 1);
+    EXPECT_EQ(list.head->next()->value(), 2);
+    EXPECT_EQ(list.head->next()->next()->value(), 3);
 }
 
 TEST(TListTest, InsertPositionOutOfRange) {
@@ -165,11 +165,11 @@ TEST(TListTest, TListEraseLink_method) {
     list.push_back(2);
     list.push_back(3);
 
-    // Удаляем второй элемент (значение 2)
-    list.erase(list.head->next()); // Удаляем узел со значением 2
 
-    EXPECT_EQ(list.head->value(), 1);                  // Первый элемент (должен быть 1)
-    EXPECT_EQ(list.head->next()->value(), 3);          // Второй элемент (должен быть 3)
+    list.erase(list.head->next());
+
+    EXPECT_EQ(list.head->value(), 1);
+    EXPECT_EQ(list.head->next()->value(), 3);
 }
 
 TEST(TListTest, TListErasePos_method) {

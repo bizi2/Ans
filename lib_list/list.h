@@ -8,8 +8,8 @@ class TNode {
     T _value;
     TNode<T>* pnext;
 
-public:
-    TNode(T value, TNode* next = nullptr);
+ public:
+    explicit TNode(T value, TNode* next = nullptr);
     explicit TNode(const TNode& nod);
 
     TNode<T>* next() const;   // Изменено на const
@@ -63,7 +63,7 @@ bool TNode<T>::operator==(T value) const {
 
 template <typename T>
 class TList {
-public:
+ public:
     TNode<T>* head = nullptr;
     TNode<T>* last = nullptr;
 
@@ -172,7 +172,7 @@ void TList<T>::pop_front() {
     head = head->next();
     delete temp;
     if (head == nullptr) {
-        last = nullptr; // Если список пуст, сбрасываем указатель на последний элемент
+        last = nullptr;
     }
 }
 
@@ -226,7 +226,8 @@ void TList<T>::erase(size_t pos) {
         if (cur == nullptr) throw std::logic_error("Out of range");
         cur = cur->next();
     }
-    if (cur == nullptr || cur->next() == nullptr) throw std::logic_error("Out of range");
+    if (cur == nullptr || cur->next() == nullptr)
+        throw std::logic_error("Out of range");
     erase(cur->next());
 }
 

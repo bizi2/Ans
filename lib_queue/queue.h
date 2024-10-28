@@ -1,15 +1,18 @@
 // Copyright 2024 Anvar
 
-#include <iostream>
+#ifndef LIB_QUEUE_QUEUE_H_
+#define LIB_QUEUE_QUEUE_H_
+
 #include "../lib_dmassive/archive.h"
+#include <iostream>
 #include <stdexcept>
 
 template <typename T>
 class TQueue {
-private:
+ private:
     TDMassive<T> _data;
 
-public:
+ public:
     TQueue();
     TQueue(const TQueue& other);
     TQueue& operator=(const TQueue& other);
@@ -53,7 +56,8 @@ void TQueue<T>::enqueue(const T& value) {
 template <typename T>
 T TQueue<T>::front() const {
     if (empty()) {
-        throw std::logic_error("Queue is empty, cannot retrieve front element.");
+        throw std::logic_error(
+            "Queue is empty, cannot retrieve front element.");
     }
     return _data[0];  // Возвращаем первый элемент
 }
@@ -80,3 +84,4 @@ template <typename T>
 void TQueue<T>::print() const {
     _data.print();
 }
+#endif

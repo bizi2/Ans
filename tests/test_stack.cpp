@@ -89,4 +89,4 @@ TEST(TStackTests, TopThrowsWhenEmpty) {
     TStack<int> stack;
     EXPECT_THROW(stack.top(), std::logic_error);
 }
-#endif // LIB_STACK_STACK_H_
+#endif
