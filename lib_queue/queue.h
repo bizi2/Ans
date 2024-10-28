@@ -3,9 +3,11 @@
 #ifndef LIB_QUEUE_QUEUE_H_
 #define LIB_QUEUE_QUEUE_H_
 
-#include "../lib_dmassive/archive.h"
+
 #include <iostream>
 #include <stdexcept>
+
+#include "../lib_dmassive/archive.h"
 
 template <typename T>
 class TQueue {
@@ -84,4 +86,4 @@ template <typename T>
 void TQueue<T>::print() const {
     _data.print();
 }
-#endif
+#endif  // LIB_QUEUE_QUEUE_H_

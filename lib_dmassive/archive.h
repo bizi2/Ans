@@ -1,4 +1,5 @@
-//Copyright 2024 Anvar
+// Copyright 2024 Anvar
+
 #pragma once
 #include <iostream>
 #include <utility>
