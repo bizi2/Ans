@@ -6,11 +6,6 @@
 #include "../gtest/gtest.h"
 #include "../lib_stack/stack.h"
 
-TEST(Test_Stack, _data_fun) {
-    TStack <int> m;
-    EXPECT_TRUE(m.empty());
-    EXPECT_EQ(m.size(), 0);
-}
 TEST(TStackTests, DefaultConstructor) {
     TStack<int> stack;
     EXPECT_TRUE(stack.empty());

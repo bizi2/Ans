@@ -1,4 +1,4 @@
-// Copyright 2024 Anvar
+//Copyright 2024 Anvar
 #pragma once
 #include <iostream>
 #include <utility>
@@ -54,7 +54,7 @@ class TDMassive {
     void clear();
     void resize(size_t n, T value = NULL);
     void reserve(size_t n = 15);
-
+    void erase(size_t index);
     void push_back(T value);
     void pop_back();
     void push_front(T value);
@@ -249,6 +249,18 @@ void TDMassive <T>::resize(size_t n, T value) {
         _size = n;
     }
 }
+template <typename T>
+void erase(size_t index) {
+        if (index >= size()) {
+            throw std::out_of_range("Index is out of bounds.");
+        }
+        // Реализация удаления элемента по индексу
+        for (size_t i = index; i < size() - 1; ++i) {
+            data[i] = data[i + 1];
+        }
+        // Уменьшение размера массива
+        --current_size;
+    }
 
 template <typename T>
 void TDMassive <T>::reserve(size_t n) {

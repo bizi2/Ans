@@ -5,10 +5,10 @@
 #include "../lib_dmassive/archive.h"
 
 namespace InputSystem {
-enum InsertMode { Back, Front, OneValue, SeveralValues };
 enum RemoveMode {
     Back1, Front1, All, First, Last, OneValue1, SeveralValues1
 };
+enum InsertMode { Back, Front, OneValue, SeveralValues };
 enum FindMode { FAll, FFirst, FLast };
 
 template <typename T>

@@ -1,5 +1,6 @@
 // Copyright 2024 Anvar
 
+
 #include <iostream>
 #include "../lib_dmassive/archive.h"
 
@@ -77,3 +78,4 @@ template <typename T>
 void TStack<T>::print() const {
     _data.print();
 }
+
