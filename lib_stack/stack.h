@@ -81,4 +81,4 @@ template <typename T>
 void TStack<T>::print() const {
     _data.print();
 }
-#endif  // LIB_STACK_QUEUE_H_
+#endif  // LIB_STACK_STACK_H_
