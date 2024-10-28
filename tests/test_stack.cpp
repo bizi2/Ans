@@ -1,4 +1,8 @@
 // Copyright 2024 Anvar
+
+#ifndef LIB_STACK_STACK_H_
+#define LIB_STACK_STACK_H_
+
 #include "../gtest/gtest.h"
 #include "../lib_stack/stack.h"
 
@@ -52,7 +56,7 @@ TEST(TStackTests, Top) {
     TStack<int> stack;
     stack.push(1);
     stack.push(2);
-    
+
     EXPECT_EQ(stack.top(), 2);
 
     stack.pop();
@@ -90,3 +94,4 @@ TEST(TStackTests, TopThrowsWhenEmpty) {
     TStack<int> stack;
     EXPECT_THROW(stack.top(), std::logic_error);
 }
+#endif // LIB_STACK_STACK_H_
