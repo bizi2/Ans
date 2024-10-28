@@ -1,14 +1,14 @@
 // Copyright 2024 Anvar
-#pragma once
+
 #include <iostream>
 #include "../lib_dmassive/archive.h"
 
 template <typename T>
 class TStack {
-private:
+ private:
     TDMassive<T> _data;
 
-public:
+ public:
     TStack();
     TStack(const TStack& other);
     TStack& operator=(const TStack& other);
@@ -65,7 +65,7 @@ T TStack<T>::top() const {
 
 template <typename T>
 bool TStack<T>::empty() const {
-    return _data.empty();y
+    return _data.empty();
 }
 
 template <typename T>

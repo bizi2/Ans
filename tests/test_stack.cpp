@@ -1,7 +1,8 @@
 // Copyright 2024 Anvar
 #include "../gtest/gtest.h"
 #include "../lib_stack/stack.h"
-TEST(Test_Stack, _data_fun){
+
+TEST(Test_Stack, _data_fun) {
     TStack <int> m;
     EXPECT_TRUE(m.empty());
     EXPECT_EQ(m.size(), 0);
@@ -29,7 +30,7 @@ TEST(TStackTests, Push) {
     TStack<int> stack;
     stack.push(1);
     stack.push(2);
-    
+
     EXPECT_EQ(stack.size(), 2);
     EXPECT_EQ(stack.top(), 2);
 }
@@ -38,7 +39,7 @@ TEST(TStackTests, Pop) {
     TStack<int> stack;
     stack.push(1);
     stack.push(2);
-    
+
     stack.pop();
     EXPECT_EQ(stack.size(), 1);
     EXPECT_EQ(stack.top(), 1);
@@ -61,7 +62,7 @@ TEST(TStackTests, Top) {
 TEST(TStackTests, Empty) {
     TStack<int> stack;
     EXPECT_TRUE(stack.empty());
-    
+
     stack.push(1);
     EXPECT_FALSE(stack.empty());
 }
@@ -69,7 +70,7 @@ TEST(TStackTests, Empty) {
 TEST(TStackTests, Size) {
     TStack<int> stack;
     EXPECT_EQ(stack.size(), 0);
-    
+
     stack.push(1);
     EXPECT_EQ(stack.size(), 1);
 
