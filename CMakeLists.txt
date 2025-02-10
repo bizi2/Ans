@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
 # название проекта
-project(Algorithms-and-Data-Structures)
+project(Ans)
 
 # затем следует список инструкций для подключения проектов из подкаталогов
 
@@ -21,6 +21,7 @@ add_subdirectory(lib_check_brackets)
 add_subdirectory(lib_stack_list)
 add_subdirectory(lib_polinom)
 add_subdirectory(lib_matrix)
+add_subdirectory(lib_dsu)
 
 
 option(BTEST "build test?" ON)        # указываем подключаем ли google-тесты (ON или YES) или нет (OFF или NO)
