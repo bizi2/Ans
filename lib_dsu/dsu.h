@@ -1,6 +1,8 @@
 #ifndef DSU_H
 #define DSU_H
 
+#include <stdexcept>
+
 template <typename T>
 class DSU {
 
@@ -43,7 +45,7 @@ void DSU<T>::make_set(int elem) {
 template <typename T>
 int DSU<T>::find(int elem) {
     if (elem < 0 || elem >= _size) {
-        throw logic_error("Element out of range");
+         throw std::logic_error("Element out of range");
     }
 
     if (_parent[elem] != elem) {
