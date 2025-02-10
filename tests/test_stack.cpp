@@ -1,92 +1,88 @@
 // Copyright 2024 Anvar
 
-#ifndef LIB_STACK_STACK_H_
-#define LIB_STACK_STACK_H_
+#define _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
 
 #include "../gtest/gtest.h"
 #include "../lib_stack/stack.h"
 
 TEST(TStackTests, DefaultConstructor) {
-    TStack<int> stack;
-    EXPECT_TRUE(stack.empty());
-    EXPECT_EQ(stack.size(), 0);
+    TStack<int> sta;
+    EXPECT_TRUE(sta.empty());
+    EXPECT_EQ(sta.size(), 0);
 }
-
-TEST(TStackTests, AssignmentOperator) {
-    TStack<int> stack;
-    stack.push(1);
-    stack.push(2);
-
-    TStack<int> anotherStack;
-    anotherStack = stack;
-
-    EXPECT_FALSE(anotherStack.empty());
-    EXPECT_EQ(anotherStack.size(), 2);
-    EXPECT_EQ(anotherStack.top(), 2);
+TEST(TStackTests, CopyConstructor) {
+    TStack<int> sta;
+    sta.push(1);
+    TStack<int> sta2(sta);
+    EXPECT_FALSE(sta2.empty());
+    EXPECT_EQ(sta2.size(), 1);
 }
+TEST(TStackTests,OperatorQually) {
+    TStack<int> sta;
+    sta.push(1);
+    sta.push(2);
+    TStack<int> sta2 ;
+    sta2 = sta;
+    EXPECT_EQ(sta2.top(),sta.top());
+    EXPECT_FALSE(sta2.empty());
+    EXPECT_EQ(sta2.size(), 2);
 
+}
+TEST(TStackTests, Distructor) {
+    TStack<int> sta;
+
+}
 TEST(TStackTests, Push) {
-    TStack<int> stack;
-    stack.push(1);
-    stack.push(2);
-
-    EXPECT_EQ(stack.size(), 2);
-    EXPECT_EQ(stack.top(), 2);
+    TStack<int> sta;
+    sta.push(1);
+    sta.push(2);
+    EXPECT_EQ(sta.size(), 2);
+    EXPECT_EQ(sta.top(), 2);
 }
-
 TEST(TStackTests, Pop) {
-    TStack<int> stack;
-    stack.push(1);
-    stack.push(2);
-
-    stack.pop();
-    EXPECT_EQ(stack.size(), 1);
-    EXPECT_EQ(stack.top(), 1);
-
-    stack.pop();
-    EXPECT_TRUE(stack.empty());
+    TStack<int> sta;
+    sta.push(1);
+    sta.push(2);
+    sta.push(3);
+    sta.pop();
+    EXPECT_EQ(sta.size(), 2);
+    EXPECT_EQ(sta.top(), 2);
+    sta.pop();
+    EXPECT_EQ(sta.size(), 1);
+    EXPECT_EQ(sta.top(), 1);
+    sta.pop();
+    EXPECT_TRUE(sta.empty());
 }
-
 TEST(TStackTests, Top) {
-    TStack<int> stack;
-    stack.push(1);
-    stack.push(2);
-
-    EXPECT_EQ(stack.top(), 2);
-
-    stack.pop();
-    EXPECT_EQ(stack.top(), 1);
+    TStack<int> sta;
+    sta.push(1);
+    sta.push(2);
+    sta.push(3);
+    EXPECT_EQ(sta.top(), 3);
 }
-
 TEST(TStackTests, Empty) {
-    TStack<int> stack;
-    EXPECT_TRUE(stack.empty());
+    TStack<int> sta;
+    sta.push(1);
+    sta.push(2);
+    sta.push(3);
+    EXPECT_FALSE(sta.empty());
+    sta.pop();
+    sta.pop();
+    sta.pop();
+    EXPECT_TRUE(sta.empty());
 
-    stack.push(1);
-    EXPECT_FALSE(stack.empty());
 }
-
 TEST(TStackTests, Size) {
-    TStack<int> stack;
-    EXPECT_EQ(stack.size(), 0);
-
-    stack.push(1);
-    EXPECT_EQ(stack.size(), 1);
-
-    stack.push(2);
-    EXPECT_EQ(stack.size(), 2);
-
-    stack.pop();
-    EXPECT_EQ(stack.size(), 1);
+    TStack<int> sta;
+    sta.push(1);
+    sta.push(2);
+    sta.push(3);
+    EXPECT_EQ(sta.size(), 3);
 }
-
-TEST(TStackTests, PopThrowsWhenEmpty) {
-    TStack<int> stack;
-    EXPECT_THROW(stack.pop(), std::logic_error);
+TEST(TStackTests, Print) {
+    TStack<int> sta;
+    sta.push(1);
+    sta.push(2);
+    sta.push(3);
+    sta.print();
 }
-
-TEST(TStackTests, TopThrowsWhenEmpty) {
-    TStack<int> stack;
-    EXPECT_THROW(stack.top(), std::logic_error);
-}
-#endif

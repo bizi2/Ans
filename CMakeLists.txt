@@ -17,6 +17,11 @@ add_subdirectory(lib_stack)
 add_subdirectory(lib_vector)
 add_subdirectory(lib_queue)
 add_subdirectory(lib_list)
+add_subdirectory(lib_check_brackets)
+add_subdirectory(lib_stack_list)
+add_subdirectory(lib_polinom)
+add_subdirectory(lib_matrix)
+
 
 option(BTEST "build test?" ON)        # указываем подключаем ли google-тесты (ON или YES) или нет (OFF или NO)
 

@@ -1,29 +1,9 @@
-// Copyright 2024 Anvar
 #pragma once
 #include <iostream>
 #include <utility>
 #include <algorithm>
 #include "../lib_dmassive/archive.h"
 
-namespace utility {
-template<typename T>
-inline T max(T val_1, T val_2) noexcept {
-    if (val_1 > val_2) {
-        return val_1;
-    } else {
-        return val_2;
-    }
-}
-
-template<typename T>
-inline T min(T val_1, T val_2) noexcept {
-    if (val_1 < val_2) {
-        return val_1;
-    } else {
-        return val_2;
-    }
-}
-}  // namespace utility
 template <typename T> class TVector;
 template <typename T>
 TVector<T> operator*(const TVector<T>& vec, T scalar);
@@ -35,7 +15,7 @@ class TVector {
     TDMassive<T> _data;
     size_t _start_index;
 
- public:
+public:
     TVector();
     TVector(const TVector& vec);
     explicit TVector(size_t n, size_t start_index = 0);
@@ -87,16 +67,61 @@ class TVector {
     friend TVector<T> operator*<T>(T scalar, const TVector<T>& vec);
     TVector& operator+=(const TVector& vec);
     TVector& operator-=(const TVector& vec);
-    TVector& operator*=(T scalar);
+    TVector& operator*=(const TVector<T>& other);
+    TVector& operator*=(const T& scalar);
     bool operator==(const TVector& vec) const;
     bool operator!=(const TVector& vec) const;
+
+    class Iterator {
+    public:
+        Iterator(TVector<T>* vec, size_t index) : _vec(vec), _index(index) {}
+
+        Iterator& operator++() {
+            ++_index;
+            return *this;
+        }
+
+        Iterator operator++(int) {
+            Iterator temp = *this;
+            ++_index;
+            return temp;
+        }
+
+        bool operator==(const Iterator& other) const {
+            return _index == other._index;
+        }
+
+        bool operator!=(const Iterator& other) const {
+            return _index != other._index;
+        }
+
+        T& operator*() {
+            return (*_vec)[_index];
+        }
+
+        T* operator->() {
+            return &(*_vec)[_index];
+        }
+
+    private:
+        TVector<T>* _vec;
+        size_t _index;
+    };
+
+    Iterator begin() {
+        return Iterator(this, _start_index);
+    }
+
+    Iterator end() {
+        return Iterator(this, _start_index + _data.size());
+    }
 };
 
 template <typename T>
-TVector<T>::TVector(): _start_index(0) {}
+TVector<T>::TVector() : _start_index(0) {}
 
 template <typename T>
-TVector<T>:: TVector(const TVector& vec) :
+TVector<T>::TVector(const TVector& vec) :
     _data(vec._data), _start_index(vec._start_index) {}
 
 template <typename T>
@@ -142,7 +167,7 @@ const T* TVector<T>::data() const {
 template <typename T>
 void TVector<T>::swap(TVector& vec) {
     _data.swap(vec._data);
-    algorithm::swap(_start_index, vec._start_index);
+    std::swap(_start_index, vec._start_index);
 }
 
 template <typename T>
@@ -176,6 +201,9 @@ void TVector<T>::push_back(T value) {
 
 template <typename T>
 void TVector<T>::pop_back() {
+    if (_data.empty()) {
+        throw std::out_of_range("pop_back() called on empty vector");
+    }
     _data.pop_back();
 }
 
@@ -189,11 +217,17 @@ void TVector<T>::push_front(T value) {
 
 template <typename T>
 void TVector<T>::pop_front() {
+    if (_data.empty()) {
+        throw std::out_of_range("pop_front() called on empty vector");
+    }
     _data.pop_front();
 }
 
 template <typename T>
 TVector<T>& TVector<T>::insert(const T* arr, size_t n, size_t pos) {
+    if (pos > _data.size()) {
+        throw std::out_of_range("out of range. pos > size");
+    }
     if ((_data.size() + n) > _data.capacity()) {
         throw std::out_of_range("out of range. capacity < size");
     }
@@ -203,6 +237,9 @@ TVector<T>& TVector<T>::insert(const T* arr, size_t n, size_t pos) {
 
 template <typename T>
 TVector<T>& TVector<T>::insert(T value, size_t pos) {
+    if (pos > _data.size()) {
+        throw std::out_of_range("out of range. pos > size");
+    }
     if ((_data.size() + 1) > _data.capacity()) {
         throw std::out_of_range("out of range. capacity < size");
     }
@@ -212,12 +249,21 @@ TVector<T>& TVector<T>::insert(T value, size_t pos) {
 
 template <typename T>
 TVector<T>& TVector<T>::replace(size_t pos, T new_value) {
+    if (pos >= _data.size()) {
+        throw std::out_of_range("out of range. pos >= size");
+    }
     _data.replace(pos, new_value);
     return *this;
 }
 
 template <typename T>
 TVector<T>& TVector<T>::erase(size_t pos, size_t n) {
+    if (pos >= _data.size()) {
+        throw std::out_of_range("out of range. pos >= size");
+    }
+    if ((pos + n) > _data.size()) {
+        throw std::out_of_range("out of range. pos + n > size");
+    }
     _data.erase(pos, n);
     return *this;
 }
@@ -242,6 +288,9 @@ TVector<T>& TVector<T>::remove_last(T value) {
 
 template <typename T>
 TVector<T>& TVector<T>::remove_by_index(size_t pos) {
+    if (pos >= _data.size()) {
+        throw std::out_of_range("out of range. pos >= size");
+    }
     _data.remove_by_index(pos);
     return *this;
 }
@@ -263,11 +312,17 @@ size_t TVector<T>::find_last(T value) const {
 
 template <typename T>
 T& TVector<T>::operator[](size_t index) {
+    if (index >= _data.size()) {
+        throw std::out_of_range("out of range. index >= size");
+    }
     return _data[index - _start_index];
 }
 
 template <typename T>
 const T& TVector<T>::operator[](size_t index) const {
+    if (index >= _data.size()) {
+        throw std::out_of_range("out of range. index >= size");
+    }
     return _data[index - _start_index];
 }
 
@@ -281,63 +336,32 @@ TVector<T>& TVector<T>::operator=(const TVector& vec) noexcept {
 }
 
 template <typename T>
-TVector<T> TVector<T>::operator+
-(const TVector& vec) const {
-    size_t result_capacity = utility::max
-    (_data.capacity(), vec._data.capacity());
-    size_t result_start_index = utility::min
-    (start_index(), vec.start_index());
-    TVector<T> result(result_capacity, result_start_index);
-    size_t len = utility::max
-    (size() + start_index(), vec.size() + vec.start_index());
-    for (size_t i = result_start_index; i < len; i++) {
-        T value1 = 0, value2 = 0;
-        if (i >= _start_index) {
-            if (i < size() + _start_index) value1 = (*this)[i];
-        }
-        if (i >= vec._start_index) {
-            if (i < vec.size() +
-                vec._start_index) value2 = vec[i];
-        }
-        result.push_back(value1 + value2);
+TVector<T> TVector<T>::operator+(const TVector<T>& vec) const {
+    if (this->size() != vec.size()) {
+        throw std::logic_error("Vectors must have the same size for addition.");
+    }
+    TVector<T> result(this->size(), this->_start_index);
+    for (size_t i = 0; i < this->size(); ++i) {
+        result.push_back((*this)[i] + vec[i]);
     }
     return result;
 }
 
 template <typename T>
-TVector<T> TVector<T>::operator-
-(const TVector& vec) const {
-    size_t result_capacity = utility::max
-    (_data.capacity(), vec._data.capacity());
-    size_t result_start_index = utility::min
-    (start_index(), vec.start_index());
-    TVector<T> result(result_capacity, result_start_index);
-    size_t len = utility::max(size() +
-        start_index(), vec.size() + vec.start_index());
-    for (size_t i = 0; i < len; i++) {
-        T value1 = 0, value2 = 0;
-        T res = 0;
-        if (i >= _start_index) {
-            if (i < size() + _start_index) value1 = (*this)[i];
-            res = value1;
-        }
-        if (i >= vec._start_index) {
-            if (i < vec.size() + vec._start_index) value2 = vec[i];
-        }
-        if (res != 0 && (*this)[i] != 0) {
-            res -= value2;
-        } else {
-            res += value2;
-        }
-        result.push_back(res);
+TVector<T> TVector<T>::operator-(const TVector<T>& vec) const {
+    if (this->size() != vec.size()) {
+        throw std::logic_error("Vectors must have the same size for subtraction.");
+    }
+    TVector<T> result(this->size(), this->_start_index);
+    for (size_t i = 0; i < this->size(); ++i) {
+        result.push_back((*this)[i] - vec[i]);
     }
     return result;
 }
 
-
 template<typename T>
 TVector<T>& TVector<T>::operator+=(const TVector& vec) {
-    size_t pos = 0;
+   size_t pos = 0;
     size_t pos2 = 0;
     for (size_t i = 0; i < size(); i++) {
         if (_start_index + i < vec._start_index) {
@@ -354,28 +378,39 @@ TVector<T>& TVector<T>::operator+=(const TVector& vec) {
 
 template<typename T>
 TVector<T>& TVector<T>::operator-=(const TVector& vec) {
-    size_t pos = 0;
-    size_t pos2 = 0;
-    for (size_t i = 0; i < size(); i++) {
-        if (_start_index + i < vec._start_index) {
-            pos++;
-            pos2++;
-            continue;
-        }
-        if (_start_index <= vec._start_index + i) {
-            replace(pos - 1, _data[pos++] - vec._data[i - pos2]);
-        }
+    if (this->size() != vec.size()) {
+        throw std::logic_error("Vectors must have the same size for subtraction.");
+    }
+    for (size_t i = 0; i < this->size(); ++i) {
+        (*this)[i] -= vec[i];
     }
     return *this;
 }
 
 template<typename T>
-TVector<T>& TVector<T>::operator*=(T scalar) {
-    for (size_t i = 0; i < size(); i++) {
-        replace(i, _data[i] * scalar);
+TVector<T>& TVector<T>::operator*=(const T& scalar) {
+        for (size_t i = 0; i < this->size(); ++i) {
+            (*this)[i] *= scalar;
+        }
+        return *this;
+}
+template<typename T>
+TVector<T>& TVector<T>::operator*=(const TVector<T>& other) {
+    if (this->size() != other.size()) {
+        throw std::logic_error("Vectors must have the same size for addition.");
     }
+    TVector<T> result(this->size() * 2, this->_start_index);
+    for (size_t i = 0; i < this->size(); ++i) {
+        result.push_back((*this)[i]);
+    }
+    for (size_t i = 0; i < other.size(); ++i) {
+        result.push_back(other[i]);
+    }
+    *this = result;
     return *this;
 }
+
+
 
 template<typename T>
 bool TVector<T>::operator==(const TVector& vec) const {

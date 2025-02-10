@@ -1,6 +1,3 @@
-// Copyright 2024 Anvar
-
-
 #ifndef LIB_STACK_STACK_H_
 #define LIB_STACK_STACK_H_
 
@@ -9,10 +6,9 @@
 
 template <typename T>
 class TStack {
- private:
     TDMassive<T> _data;
 
- public:
+public:
     TStack();
     TStack(const TStack& other);
     TStack& operator=(const TStack& other);
@@ -42,9 +38,7 @@ TStack<T>& TStack<T>::operator=(const TStack& other) {
 }
 
 template <typename T>
-TStack<T>::~TStack() {
-    _data.clear();
-}
+TStack<T>::~TStack() {}
 
 template <typename T>
 void TStack<T>::push(const T& value) {
@@ -53,16 +47,13 @@ void TStack<T>::push(const T& value) {
 
 template <typename T>
 void TStack<T>::pop() {
-    if (empty()) {
-        throw std::logic_error("Stack is empty, cannot pop.");
-    }
     _data.pop_back();
 }
 
 template <typename T>
 T TStack<T>::top() const {
     if (empty()) {
-        throw std::logic_error("Stack is empty, cannot retrieve top element.");
+        throw std::underflow_error("Stack underflow");
     }
     return _data[_data.size() - 1];
 }
@@ -81,4 +72,5 @@ template <typename T>
 void TStack<T>::print() const {
     _data.print();
 }
+
 #endif  // LIB_STACK_STACK_H_

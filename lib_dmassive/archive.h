@@ -1,5 +1,4 @@
 // Copyright 2024 Anvar
-
 #pragma once
 #include <iostream>
 #include <utility>
@@ -27,6 +26,7 @@ class TDMassive {
     size_t _deleted;
 
  public:
+ 
     TDMassive();
     TDMassive(const TDMassive& archive);
     TDMassive(const T* arr, size_t n);
@@ -55,12 +55,11 @@ class TDMassive {
     void clear();
     void resize(size_t n, T value = NULL);
     void reserve(size_t n = 15);
-    void erase(size_t index);
-    void push_back(T value);
-    void pop_back();
-    void push_front(T value);
-    void pop_front();
 
+    void push_back(T value);  // добавление элемента (в конец)
+    void pop_back();  // удаление элемента (из конца)
+    void push_front(T value);  // добавление элемента (в начало)
+    void pop_front();  // удаление элемента (из начала)
     TDMassive& insert(const T* arr, size_t n, size_t pos);
     TDMassive& insert(T value, size_t pos);
 
@@ -79,11 +78,13 @@ class TDMassive {
     T& operator[](size_t index);
     const T& operator[](size_t index) const;
     TDMassive& operator=(const TDMassive& other);
-
+    State getState(size_t index) const;
+    size_t getDeletedCount() const;
  private:
     size_t count_value(T value)  const noexcept;
     void repacking();
 };
+
 
 template <typename T>
 TDMassive<T>::TDMassive() {
@@ -91,222 +92,101 @@ TDMassive<T>::TDMassive() {
     _capacity = STEP_CAPACITY;
     _data = new T[_capacity];
     _states = new State[_capacity];
-    _deleted = 0;
     for (size_t i = 0; i < STEP_CAPACITY; i++) {
         _states[i] = State::empty;
     }
 }
+template<typename T>
+TDMassive <T>::TDMassive(const TDMassive& archive) :
+_size(archive._size) , _capacity(archive._capacity), _deleted(archive._deleted) {
+    _data = new T[_capacity];
+    _states = new State[_capacity];
+    if(archive._states[0] == State::deleted){
+        for (size_t i = 0; i < _size - 1; i++) {
+            _data[i] = archive._data[i + 1];
+            _states[i] = archive._states[i + 1];
+        }
+        _size--;
+    } else {
+        for (size_t i = 0; i < _size; ++i) {
+            _data[i] = archive._data[i];
+            _states[i] = archive._states[i];
+        }
+    }
+    for (size_t i = _size; i < _capacity; ++i) {
+        _states[i] = State::empty;
+    }
 
-template <typename T>
-TDMassive<T>::TDMassive(size_t n) {
-    _capacity = n;
-    _size = 0;
-    _deleted = 0;
+}
+template<typename T>
+TDMassive<T>::TDMassive(const T* arr, size_t n): 
+_size(n) , _capacity((n > STEP_CAPACITY) ? n : STEP_CAPACITY), _deleted(0) {
+    _data = new T[_capacity];
+    _states = new State[_capacity];
+    
+    for (size_t i = 0; i < _size; i++) {
+        _data[i] = arr[i];
+        _states[i] = State::busy;
+    }
+    for (size_t i = _size; i < _capacity; i++) {
+        _states[i] = State::empty;
+    }
+
+
+}
+template<typename T>
+TDMassive<T>::TDMassive(size_t n, T value) :
+    _size(n), _capacity((n > STEP_CAPACITY) ? n : STEP_CAPACITY), _deleted(0) {
+    if (n == 0) {
+        _data = nullptr;
+        _states = nullptr;
+    }
+    else {
+        _data = new T[_capacity];
+        _states = new State[_capacity];
+        for (size_t i = 0; i < _size; i++) {
+            _data[i] = value;
+            _states[i] = State::busy;
+        }
+        for (size_t i = _size; i < _capacity; i++) {
+            _states[i] = State::empty;
+        }
+    }
+}
+template<typename T>
+TDMassive<T>::TDMassive(const TDMassive& archive, size_t pos, size_t n): 
+    _size(n), _capacity((n > STEP_CAPACITY) ? n : STEP_CAPACITY) {
+    if (pos + n > archive._size) {
+        throw std::out_of_range("invalid");
+    }
+    _data = new T[_capacity];
+    _states = new State[_capacity];
+
+    for (size_t i = 0; i < _capacity; i++) {
+        _data[i] = archive._data[pos + i];
+        _states[i] = archive._states[pos + i];
+    }
+    for (size_t i = n; i < _capacity; i++) {
+        _states[i] = State::empty;
+    }
+}
+template<typename T>
+TDMassive<T>::TDMassive(size_t n) : _size(0), _capacity(n), _deleted(0) {
     _data = new T[_capacity];
     _states = new State[_capacity];
     for (size_t i = 0; i < _capacity; i++) {
         _states[i] = State::empty;
     }
-}
-
-template <typename T>
-TDMassive<T>::TDMassive(const TDMassive& archive) {
-    _capacity = archive._capacity;
-    _size = archive._size;
-    _deleted = archive._deleted;
-
-    _data = new T[_capacity];
-    _states = new State[_capacity];
-
-    for (size_t i = 0; i < _size; i++) {
-        _data[i] = archive._data[i];
-        _states[i] = archive._states[i];
+    if (_states[0] == State::deleted) {
+        ++_deleted;
+        --_size;
     }
-}
-
-template <typename T>
-TDMassive<T>::TDMassive(const T* arr, size_t n) {
-    _capacity = (n / STEP_CAPACITY)* STEP_CAPACITY + STEP_CAPACITY;
-    _size = n;
-    _deleted = 0;
-
-    _data = new T[_capacity];
-    _states = new State[_capacity];
-
-    for (size_t i = 0; i < _size; i++) {
-        _data[i] = arr[i];
-        _states[i] = State::busy;
-    }
-}
-
-template <typename T>
-TDMassive<T>::TDMassive(size_t n, T value) {
-    _capacity = (n / STEP_CAPACITY) * STEP_CAPACITY + STEP_CAPACITY;
-    _size = n;
-    _deleted = 0;
-
-    _data = new T[_capacity];
-    _states = new State[_capacity];
-
-    for (size_t i = 0; i < _size; i++) {
-        _data[i] = value;
-        _states[i] = State::busy;
-    }
-}
-
-template <typename T>
-TDMassive<T>::TDMassive(const TDMassive& archive, size_t pos, size_t n) {
-    _capacity = (n / STEP_CAPACITY)* STEP_CAPACITY + STEP_CAPACITY;
-    _size = n;
-    _deleted = 0;
-
-    _data = new T[_capacity];
-    _states = new State[_capacity];
-
-    for (size_t i = 0; i < n; i++) {
-        if (pos + i < archive._size) {
-            _data[i] = archive._data[pos + i];
-            _states[i] = archive._states[pos + i];
-        } else {
-            _data[i] = T();
-            _states[i] = State::empty;
-        }
-    }
-}
-
-template <typename T>
-size_t TDMassive<T>::size() const noexcept {
-    return _size;
-}
-template <typename T>
-size_t TDMassive<T>::capacity() const noexcept {
-    return _capacity;
-}
-template <typename T>
-State TDMassive<T>::get_state(size_t index) const {
-    return _states[index];
-}
-
-template<typename T>
-void TDMassive<T>::set_size(size_t size) noexcept {
-    _size = size;
-}
-
-template <typename T>
-const T* TDMassive<T> ::data() const {
-    return _data;
-}
-
-template <typename T>
-void TDMassive <T>::swap(TDMassive& archive) {
-    algorithm::swap(_size, archive._size);
-    algorithm::swap(_capacity, archive._capacity);
-    algorithm::swap(_data, archive._data);
-    algorithm::swap(_states, archive._states);
-    algorithm::swap(_deleted, archive._deleted);
-}
-
-template <typename T>
-TDMassive<T>& TDMassive <T>::assign(const TDMassive& archive) {
-    delete[] _data;
-    delete[] _states;
-    _size = archive._size;
-    _capacity = archive._capacity;
-    _data = new T[_capacity];
-    _states = new State[_capacity];
-    for (int i = 0; i < _size; i++) {
-        _data[i] = archive._data[i];
-        _states[i] = archive._states[i];
-    }
-    return *this;
-}
-
-template <typename T>
-void TDMassive<T>::clear() {
-    delete[] _data;
-    delete[] _states;
-    _data = nullptr;
-    _states = nullptr;
-    _size = 0;
-    _capacity = 0;
-    _deleted = 0;
-}
-
-template <typename T>
-void TDMassive <T>::resize(size_t n, T value) {
-    if (n <= _size) {
-        for (size_t i = _size; i >= n; i--) {
-            _states[i] = State::empty;
-        }
-        _size = n;
-    } else {
-        if (n > _capacity) {
-            reserve(n);
-        }
-        for (size_t i = _size; i < n; ++i) {
-            _states[i] = State::busy;
-            _data[i] = value;
-        }
-        _size = n;
-    }
-}
-template <typename T>
-void erase(size_t index) {
-        if (index >= size()) {
-            throw std::out_of_range("Index is out of bounds.");
-        }
-        // Реализация удаления элемента по индексу
-        for (size_t i = index; i < size() - 1; ++i) {
-            data[i] = data[i + 1];
-        }
-        // Уменьшение размера массива
-        --current_size;
-    }
-
-template <typename T>
-void TDMassive <T>::reserve(size_t n) {
-    repacking();
-    if (n < _capacity ||(_size < _capacity && n <= _capacity)) {
-        return;
-    }
-    _capacity = (n / STEP_CAPACITY) * STEP_CAPACITY + STEP_CAPACITY;
-    if (_capacity > MAX_CAPACITY) {
-        throw std::logic_error("Error in function" \
-                               "void TArchive<T>::reserve(size_t n)\":"
-                               " complete max size of capacity.");
-    }
-    T* newData = new T[_capacity];
-    std::memcpy(newData, _data, _size);
-    delete[] _data;
-    _data = newData;
-    State* newDat = new State[_capacity];
-    std::memcpy(newDat, _states, _size);
-    delete[] _states;
-    _states = newDat;
-}
-
-template <typename T>
-void TDMassive<T>::repacking() {
-    int step = 0;
-    int newSize = 0;
-    for (int i = 0; i < _size; i++) {
-        if (_states[i] == State::deleted) {
-            step++;
-        } else {
-            _data[i - step] = _data[i];
-            _states[i - step] = _states[i];
-        }
-    }
-    newSize = _size - step;
-    for (int i = newSize; i < _size; i++) {
-        _states[i] = State::empty;
-    }
-    _size = newSize;
 }
 
 template <typename T>
 TDMassive<T>::~TDMassive() {
     delete[] _data;
+    delete[] _states;
     _data = nullptr;
 }
 
@@ -319,87 +199,176 @@ template <typename T>
 inline bool TDMassive<T>::full() const noexcept {
     return _size == _capacity;
 }
+template<typename T>
+size_t TDMassive<T>::size() const noexcept {
+    return _size;
+}
 
-template <typename T>
-TDMassive<T>& TDMassive<T>::insert(T value, size_t pos) {
-    if (_size < pos) {
-        throw std::logic_error("Error in function" \
-                               "TArchive<T>& insert(T value, size_t pos)\":"
-                               " wrong position value.");
-    }
-    if (_states[pos] == State::deleted) {
-        _data[pos] = value;
-        _states[pos] = State::busy;
-        return *this;
-    }
-    if (this->full()) {
-        this->reserve();
-    }
-    if (_capacity / 3 < _deleted) {
-        repacking();
-    }
-    for (size_t i = _size; i > pos; i--) {
+template<typename T>
+size_t TDMassive<T>::capacity() const noexcept {
+    return _capacity;
+
+}
+template<typename T>
+const T* TDMassive<T>::data() const {
+
+/*     if (_states[0] == State::busy) {
+        for (size_t i = _size; i > 0; i--) {
+            _data[i] = _data[i - 1];
+            _states[i] = _states[i - 1];
+        }
+        return _data;
+    } */
+    /* if(_states[0] == State::busy){
+        for (size_t i = _size; i > 0; --i) {
         _data[i] = _data[i - 1];
         _states[i] = _states[i - 1];
-    }
-    _data[pos] = value;
-    _states[pos] = State::busy;
-    _size++;
-    return *this;
+        }
+    } */
+    return _data;
 }
+template<typename T>
+void TDMassive<T>::swap(TDMassive& archive) {
+    std::swap(_data, archive._data);
+    std::swap(_states, archive._states);
+    std::swap(_capacity, archive._capacity);
+    std::swap(_size, archive._size);
+    std::swap(_deleted, archive._deleted);
+}
+template<typename T> 
+TDMassive<T>& TDMassive<T>:: assign(const TDMassive& archive) {
+  if (this != &archive) {
+    delete[] _data;
+    delete[] _states;
 
-template <typename T>
-TDMassive<T>& TDMassive<T>::insert(const T* arr, size_t n, size_t pos) {
-    size_t numbers = 0;
-    if (_size < pos) {
-        throw std::logic_error("Error in function" \
-        "TArchive<T>& insert(T value, size_t pos)\":"
-        " wrong position value.");
+    _capacity = archive._capacity;
+    _size = archive._size;
+    _deleted = archive._deleted;
+
+    _data = new T[_capacity];
+    _states = new State[_capacity];
+
+    for (size_t i = 0; i < _capacity; i++) {
+      _data[i] = archive._data[i];
+      _states[i] = archive._states[i];
     }
-    for (size_t i = pos; i < n + pos; ++i) {
-        if (_states[i] == State::deleted) {
-            numbers++;
+  }
+
+  return *this;
+}
+template<typename T>
+void TDMassive<T>::clear() {
+    _size = 0;
+    _deleted = 0;
+    for (size_t i = 0; i < _capacity; i++) {
+        _states[i] = State::empty;
+    }
+}
+template<typename T>
+void TDMassive<T>::resize(size_t n, T value) {
+    if (n > _capacity) {
+        T* new_data = new T[n];
+        State* new_states = new State[n];
+        for (size_t i = 0; i < _size; i++) {
+            new_data[i] = _data[i];
+            new_states[i] = _states[i];
+        }
+
+        for (size_t i = _size; i < n; i++) {
+            new_data[i] = value;
+            new_states[i] = State::busy;
+
+
+        }
+
+        if (_data) {
+            delete[] _data;
+            _data = nullptr;
+        }
+        if (_states) {
+            delete[] _states;
+            _states = nullptr;
+        }
+        _data = new_data;
+        _states = new_states;
+        _capacity = n;
+    }else {
+        for (size_t i = _size; i < n; i++) {
+            _data[i] = value;
+            _states[i] = State::busy;
         }
     }
-
-    if ((_capacity - _size) < n) {
-        reserve(_size + n);
-    }
-    if (_capacity / 3 < _deleted) {
-        repacking();
-    }
-    for (size_t i = _size; i > pos; i--) {
-        _data[i + n - 1] = _data[i - 1];
-        _states[i + n - 1] = _states[i - 1];
-    }
-    for (size_t i = 0; i < n; ++i) {
-        _data[pos + i] = arr[i];
-        _states[pos + i] = State::busy;
-    }
-    _size += n - numbers;
-    return *this;
+    _size = n;
 }
+template<typename T>
+void TDMassive<T>::reserve(size_t n) {
+    if (n > _capacity) {
+        T* new_data = new T[n];// написать формулу со step capacity
+        State* new_states = new State[n];
+        for (size_t i = 0; i < _size; i++) {
+            new_data[i] = _data[i];
+            new_states[i] = _states[i];
 
-template <typename T>
-void TDMassive<T>::push_back(T value) {
+        }
+        delete[] _data;
+        delete[] _states;
+        _data = new_data;
+        _states = new_states;
+        _capacity = n;
+    }
+}
+template<typename T>
+void TDMassive<T>::push_back(T value){
+    if (_size == -1) {
+        throw std::out_of_range("masive is full");
+    }
     if (this->full()) {
-        this->reserve();
+        reserve(_capacity + 1);
     }
-    if (_capacity / 3 < _deleted) {
-        repacking();
-    }
+
     _data[_size] = value;
     _states[_size] = State::busy;
     _size++;
-}
 
-template <typename T>
+}
+template<typename T>
+void TDMassive<T>::pop_back() {
+    if (_size <= 0) {
+        throw std::logic_error("Error in function" \
+        "TDMassive<T>& insert(const T* arr, size_t n, size_t pos)\":"
+        " wrong position value.");
+    }
+    else{
+        _states[_size - 1] = State::empty;
+        _size--;
+    }
+}
+template<typename T>
+void TDMassive<T>::pop_front() {
+    if (_size - _deleted <= 0) {
+        throw std::logic_error("Error in function" \
+            "TDMassive<T>& insert(const T* arr, size_t n, size_t pos)\":"
+            " wrong position value.");
+    }
+    if (_size == -1) {
+        throw std::out_of_range("masive is full");
+    }
+    for (size_t i = 0; i < _size; i++) {
+        if (_states[i] != State::deleted) {
+            _states[i] = State::deleted;
+            break;
+        }
+    }
+    _deleted++;
+    _size--;
+}
+template<typename T>
 void TDMassive<T>::push_front(T value) {
     if (this->full()) {
-        this->reserve();
+        reserve(_capacity + STEP_CAPACITY);
     }
-    if (_capacity / 3 < _deleted) {
-        repacking();
+    if (_size == -1) {
+        throw std::out_of_range("masive is full");
     }
     for (size_t i = _size; i > 0; i--) {
         _data[i] = _data[i - 1];
@@ -410,132 +379,153 @@ void TDMassive<T>::push_front(T value) {
     _size++;
 }
 
-template <typename T>
-void TDMassive<T>::pop_front() {
-    if (_size <= 0) {
-        throw std::logic_error("Error in function" \
-                               "void TArchive<T>::pop_front()\":"
-                               "archive clear");
+template<typename T>
+TDMassive<T>& TDMassive<T>::insert(const T* arr, size_t n, size_t pos) {
+    if (_size < pos) {
+        throw std::logic_error("Error in function \
+\"TDMassive<T>& insert(T value, size_t pos)\": wrong position value.");
     }
-    for (size_t i = 1; i < _size; i++) {
-        _data[i - 1] = _data[i];
-        _states[i - 1] = _states[i];
+    if (_size + n > _capacity) {
+        reserve(_capacity + n);
     }
-    _states[_size - 1] = State::deleted;
-    _deleted++;
-    _size--;
+    for (size_t i = _size; i > pos; --i) {
+        _data[i + n - 1] = _data[i - 1];
+        _states[i + n - 1] = _states[i - 1];
+    }
+    for (size_t i = 0; i < n; ++i) {
+        _data[pos + i] = arr[i];
+        _states[pos + i] = State::busy;
+    }
+    _size += n;
+    return *this;
 }
-
 template <typename T>
-void TDMassive<T>::pop_back() {
-    if (_size <= 0) {
-        throw std::logic_error("Error in function" \
-        "TArchive<T>& insert(const T* arr, size_t n, size_t pos)\":"
-        " wrong position value.");
+TDMassive<T>& TDMassive<T>::insert(T value, size_t pos) {
+    if (_size < pos) {
+        throw std::logic_error("Error in function \
+\"TDMassive<T>& insert(T value, size_t pos)\": wrong position value.");
     }
-    _states[_size - 1] = State::empty;
-    --_size;
-}
+    if (this->full()) {
+        size_t newCapacity = _capacity + STEP_CAPACITY;
+        if (newCapacity < _capacity) {
+            throw std::overflow_error("Maximum capacity reached.");
+        }
+        this->reserve(newCapacity);
+    }
+    for (size_t i = _size; i > pos; i--) {
+        _data[i] = _data[i - 1];
+        _states[i] = _states[i - 1];
+    }
+    _data[pos] = value;
+    _states[pos] = State::busy;
+    _size++;
 
-template <typename T>
+    return *this;
+}
+template<typename T>
+TDMassive<T>& TDMassive<T>::replace(size_t pos, T new_value) {
+    if (_size <= pos) {
+        throw std::logic_error("Error in function \
+\"TDMassive<T>& insert(T value, size_t pos)\": wrong position value.");
+    }
+    if (this->full()) {
+        size_t newCapacity = _capacity + STEP_CAPACITY;
+        if (newCapacity < _capacity) {
+            throw std::overflow_error("Maximum capacity reached.");
+        }
+        this->reserve(newCapacity);
+    }
+    _data[pos] = new_value;
+    _states[pos] = State::busy;
+    return *this;
+
+}
+template<typename T>
+TDMassive<T>& TDMassive<T>::erase(size_t pos, size_t n) {
+    if (pos >= _size || pos + n > _size) {
+        throw std::out_of_range("Error in function \"TDMassive<T>& erase(size_t pos, size_t n)\": position or range out of bounds.");
+    }
+    for (size_t i = pos; i < pos + n; ++i) {
+        _states[i] = State::deleted;
+    }
+    for (size_t i = pos + n; i < _size; ++i) {
+        _data[i - n] = _data[i];
+        _states[i - n] = _states[i];
+    }
+    _size -= n;
+    return *this;
+}
+template<typename T>
+TDMassive<T>& TDMassive<T>::remove_all(T value) {
+    size_t shift = 0;
+
+    for (size_t i = 0; i < _size; ++i) {
+        if (_data[i] == value) {
+            _states[i] = State::deleted;
+            ++shift;
+        }
+        else if (shift > 0) {
+            _data[i - shift] = _data[i];
+            _states[i - shift] = _states[i];
+        }
+    }
+
+    _size -= shift;
+    return *this;
+}
+template<typename T>
+TDMassive<T>& TDMassive<T>::remove_first(T value) {
+    size_t index = _size;
+    for (size_t i = 0; i < _size; i++) {
+        if (_data[i] == value) {
+            index = i;
+            break;
+        }
+    }
+    if (index < _size) {
+        for (size_t i = index; i < _size - 1; i++) {
+            _data[i] = _data[i + 1];
+        }
+        _size--;
+        _states[_size] = State::deleted;
+    }
+    return *this;
+}
+template<typename T>
+TDMassive<T>& TDMassive<T>::remove_last(T value) {
+    for (size_t i = _size; i >= 1; --i) {
+        if (_data[i - 1] == value) {
+            _states[i - 1] = State::deleted;
+            for (size_t j = i - 1; j < _size;++j) {
+                _data[j] = _data[j + 1];
+                _states[j] = _states[j + 1];
+            }
+            _size--;
+            break;
+        }
+    }
+    return *this;
+}
+template<typename T>
 TDMassive<T>& TDMassive<T>::remove_by_index(size_t pos) {
     if (pos >= _size) {
         throw std::out_of_range("Index out of range");
     }
-    _states[pos] = State::deleted;  // Помечаем элемент как удаленный
-    _deleted++;  // Увеличиваем счетчик удаленных элементов
+    _states[pos] = State::deleted;
+    for (size_t i = pos; i < _size - 1; ++i) {
+        _data[i] = _data[i + 1];
+        _states[i] = _states[i + 1];
+    }
+    _size--;
     return *this;
 }
-
 template <typename T>
-TDMassive<T>& TDMassive<T>::erase(size_t pos, size_t n) {
-    if (_size < pos || empty()) {
-        throw std::logic_error("Error in function"\
-        "TArchive<T>& TArchive<T>::erase(size_t pos, size_t n)\":"
-        "wrong position value.");
-    }
-    for (size_t i = pos; i < pos + n && i < _capacity; i++) {
+void TDMassive<T>::print() const noexcept {
+    for (size_t i = 0; i < _size; i++) {
         if (_states[i] != State::deleted) {
-            _states[i] = State::deleted;
-            _deleted++;
-        } else {
-            n++;
+            std::cout << _data[i] << ", ";
         }
     }
-    return *this;
-}
-
-template <typename T>
-TDMassive<T>& TDMassive<T>::remove_all(T value) {
-    if (_size <= 0) {
-        throw std::logic_error("Error in function" \
-        "TArchive<T>& TArchive<T>::remove_all(T value)\":"
-        "archive clear");
-    }
-    for (size_t i = 0; i < _size; i++) {
-        if (_data[i] == value) {
-            _states[i] = State::deleted;
-            _deleted++;
-        }
-    }
-    return *this;
-}
-
-template <typename T>
-TDMassive<T>& TDMassive<T>::remove_first(T value) {
-    if (_size <= 0) {
-        throw std::logic_error("Error in function" \
-        "TArchive<T>& TArchive<T>::remove_first(T value)\":"
-        "archive clear");
-    }
-    for (size_t i = 0; i < _size; i++) {
-        if (_data[i] == value) {
-            _states[i] = State::deleted;
-            break;
-        }
-    }
-    _deleted++;
-    return *this;
-}
-
-template <typename T>
-TDMassive<T>& TDMassive<T>::remove_last(T value) {
-    if (_size <= 0) {
-        throw std::logic_error("Error in function" \
-        "TArchive<T>& TArchive<T>::remove_last(T value)\":"
-        "archive clear");
-    }
-    for (size_t i = _size; i > 0; i--) {
-        if (_data[i] == value) {
-            _states[i] = State::deleted;
-            break;
-        }
-    }
-    _deleted++;
-    return *this;
-}
-
-template <typename T>
-size_t TDMassive<T>::find_first(T value) const {
-    for (size_t i = 0; i < _size; i++) {
-        if (_data[i] == value && _states[i] != State::deleted) {
-            return i;
-        }
-    }
-    throw std::logic_error("Error in function" \
-    "size_t TArchive<T>::find_first(T value)\":No mathes");
-}
-
-
-template <typename T>
-size_t TDMassive<T>::find_last(T value) const {
-    for (size_t i = _size; i > 0; i--) {
-        if (_data[i] == value && _states[i] != State::deleted) {
-            return i;
-        }
-    }
-    throw std::logic_error("Error in function" \
-    "size_t TArchive<T>::find_first(T value)\":No mathes");
 }
 
 template <typename T>
@@ -556,77 +546,93 @@ size_t* TDMassive<T>::find_all(T value) const noexcept {
 
     return found_positions;
 }
-
 template <typename T>
-TDMassive<T>& TDMassive<T>::replace(size_t pos, T new_value) {
-    if (_states[pos] != State::busy) {
-        throw std::logic_error("Error in function" \
-        "TArchive<T>& replace(size_t pos, T new_value)\":"
-        "No mathes");
-    }
-    if (pos >= _size) {
-        throw std::logic_error("Error in function" \
-        "TArchive<T>& replace(size_t pos, T new_value)\":"
-        "Invalid position");
-    }
-    _data[pos] = new_value;
-    _states[pos] = State::busy;
-    return *this;
-}
-
-template <typename T>
-void TDMassive<T>::print() const noexcept {
+size_t TDMassive<T>::find_first(T value) const{
     for (size_t i = 0; i < _size; i++) {
-        if (_states[i] != State::deleted) {
-            std::cout << _data[i] << ", ";
+        if (_data[i] == value && _states[i] != State::deleted) {
+            return i;
         }
     }
-}
+    return -1;
 
+ }
+
+
+template <typename T>
+size_t TDMassive<T>::find_last(T value) const {
+    for (size_t i = _size; i > 0; i--) {
+        if (_data[i] == value && _states[i] != State::deleted) {
+            return i;
+        }
+    }
+    return -1;
+}
+template <typename T>
+State TDMassive<T>::getState(size_t index) const {
+    return _states[index];
+}
 template <typename T>
 size_t TDMassive<T>::count_value(T value) const noexcept {
     size_t count = 0;
     for (size_t i = 0; i < _size; i++) {
-        if (_data[i] == value) {
+        if (_data[i] == value && _states[i] != State::deleted) {
             count++;
         }
     }
     return count;
 }
-
+template <typename T>
+size_t TDMassive<T>::getDeletedCount() const {
+    size_t count = 0;
+    for (size_t i = 0; i < _size; ++i) {
+        if (_states[i] == State::deleted) {
+            ++count;
+        }
+    }
+    return count;
+}
 template <typename T>
 T& TDMassive<T>::operator[](size_t index) {
-    for (int i = index; i < _size; i++) {
-        if (_states[i] == State::busy) {
+    if (index >= _size) {
+        throw std::out_of_range("Индекс выходит за пределы массива");
+    }
+    for (size_t i = index; i < _size; i++){
+        if(_states[i] == State::busy ){
             return _data[i];
         }
     }
+    throw std::out_of_range("Элемент не найден");
 }
 
 template <typename T>
 const T& TDMassive<T>::operator[](size_t index) const {
-    for (int i = index; i < _size; i++) {
-        if (_states[i] == State::busy) {
+    if (index >= _size) {
+        throw std::out_of_range("Индекс выходит за пределы массива");
+    }
+    for (size_t i = index; i < _size; i++){
+        if(_states[i] == State::busy ){
             return _data[i];
         }
     }
+    throw std::out_of_range("Элемент не найден");
 }
-
 template <typename T>
-TDMassive<T>& TDMassive<T>::operator=(const TDMassive& other) {
-    if (this == &other) {
-        return *this;
+TDMassive<T>& TDMassive<T>::operator=(const TDMassive<T>& other) {
+   if (this != &other) {
+        delete[] _data;
+        delete[] _states;
+        _size = other._size;
+        _capacity = other._capacity;
+        _deleted = other._deleted;
+        _data = new T[_capacity];
+        _states = new State[_capacity];
+        for (size_t i = 0; i < _size; i++) {
+            _data[i] = other._data[i];
+            _states[i] = other._states[i];
+        }
     }
-    delete[] _data;
-    delete[] _states;
-    _capacity = other._capacity;
-    _size = other._size;
-    _deleted = other._deleted;
-
-    _data = new T[_capacity];
-    _states = new State[_capacity];
-
-    std::copy(other._data, other._data + _capacity, _data);
-    std::copy(other._states, other._states + _capacity, _states);
     return *this;
 }
+
+
+

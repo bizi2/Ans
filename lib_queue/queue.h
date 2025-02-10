@@ -11,21 +11,19 @@
 
 template <typename T>
 class TQueue {
- private:
-    TDMassive<T> _data;
 
+    TDMassive<T> _data;
  public:
     TQueue();
     TQueue(const TQueue& other);
     TQueue& operator=(const TQueue& other);
     ~TQueue();
 
-    void enqueue(const T& value);
-    void dequeue();
+    void push_back(const T& value);
+    void pop_front();
     T front() const;
     bool empty() const;
     size_t size() const;
-    void erase(size_t index);  // Метод для удаления элемента по индексу
 
     void print() const;
 };
@@ -46,15 +44,16 @@ TQueue<T>& TQueue<T>::operator=(const TQueue& other) {
 
 template <typename T>
 TQueue<T>::~TQueue() {
-    _data.clear();
 }
 
 template <typename T>
-void TQueue<T>::enqueue(const T& value) {
+void TQueue<T>::push_back(const T& value) {
     _data.push_back(value);
 }
-
-
+template <typename T>
+void TQueue<T>::pop_front() {
+    _data.pop_front();
+}
 template <typename T>
 T TQueue<T>::front() const {
     if (empty()) {
@@ -63,23 +62,13 @@ T TQueue<T>::front() const {
     }
     return _data[0];  // Возвращаем первый элемент
 }
-
 template <typename T>
 bool TQueue<T>::empty() const {
     return _data.empty();
 }
-
 template <typename T>
 size_t TQueue<T>::size() const {
     return _data.size();
-}
-
-template <typename T>
-void TQueue<T>::dequeue() {
-    if (empty()) {
-        throw std::logic_error("Queue is empty, cannot dequeue.");
-    }
-    _data.erase(0);  // Удаляем первый элемент
 }
 
 template <typename T>

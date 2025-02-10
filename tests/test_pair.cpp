@@ -1,34 +1,35 @@
 // Copyright 2024 Anvar
+#define _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
 #include "../gtest/gtest.h"
 #include "../lib_pair/pair.h"
 
-TEST(TPairTest, SetMethods) {
-    TPair<int, int> pair1(1, 2);
-    pair1.set_first(3);
-    pair1.set_second(4);
-    EXPECT_EQ(pair1.first(), 3);
-    EXPECT_EQ(pair1.second(), 4);
+TEST(TPairTest, First) {
+    TPair<int, std::string> pair(42, "hello");
+    EXPECT_EQ(42, pair.first());
+}
+TEST(TPairTest, Second) {
+    TPair<int , int> pair(42, 43);
+    EXPECT_EQ(43, pair.second());
+}
+TEST(TPairTest, SetFirst) {
+    int value = 42;
+    TPair<int, int> pair(43, 44);
+    pair.set_first(value);
+    EXPECT_EQ(42, pair.first());
+}
+TEST(TPairTest, SetSecond) {
+    int value = 42;
+    TPair<int, int> pair(43, 44);
+    pair.set_second(value);
+    EXPECT_EQ(42, pair.second());
 }
 
-TEST(TPairTest, AssignmentOperator) {
-    TPair<int, int> pair1(1, 2);
-    TPair<int, int> pair2 = pair1;
-    EXPECT_EQ(pair2.first(), 1);
-    EXPECT_EQ(pair2.second(), 2);
-}
-
-TEST(TPairTest, AdditionOperator) {
-    TPair<int, int> pair1(1, 2);
-    TPair<int, int> pair2(3, 4);
-    TPair<int, int> result = pair1 + pair2;
-    EXPECT_EQ(result.first(), 4);
-    EXPECT_EQ(result.second(), 6);
-}
-
-TEST(TPairTest, EqualityOperator) {
-    TPair<int, int> pair1(5, 6);
-    TPair<int, int> pair2(5, 6);
-    TPair<int, int> pair3(7, 8);
-    EXPECT_TRUE(pair1 == pair2);
-    EXPECT_FALSE(pair1 == pair3);
+TEST(TPairTest, Swap) {
+  TPair<int, int> pair1(10, 20);
+  TPair<int, int> pair2(30, 40);
+  pair1.swap(pair2);
+  EXPECT_EQ(pair1.first(), 30);
+  EXPECT_EQ(pair1.second(), 40);
+  EXPECT_EQ(pair2.first(), 10);
+  EXPECT_EQ(pair2.second(), 20);
 }
