@@ -3,7 +3,11 @@ cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
 # название проекта
 project(Ans)
-
+if(MSVC)  
+    add_compile_options(/utf-8)  # Для Visual Studio (MSVC)  
+else()  
+    add_compile_options(-finput-charset=UTF-8 -fexec-charset=UTF-8)  # Для GCC/Clang  
+endif()  
 # затем следует список инструкций для подключения проектов из подкаталогов
 
 include(cmake/function.cmake)         # подхватываем функции, реализованные в файле function.cmake
@@ -23,7 +27,9 @@ add_subdirectory(lib_polinom)
 add_subdirectory(lib_matrix)
 add_subdirectory(lib_dsu)
 add_subdirectory(lib_merge_sorted_lists)
-
+add_subdirectory(lib_itable)
+add_subdirectory(lib_tbsttable)
+add_subdirectory(lib_bin_search_tree)
 
 option(BTEST "build test?" ON)        # указываем подключаем ли google-тесты (ON или YES) или нет (OFF или NO)
 
