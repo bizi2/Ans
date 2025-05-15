@@ -1,5 +1,5 @@
 // Copyright 2024 Marina Usova
-
+#define _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
 #include <gtest.h>
 #include "../lib_easy_example/easy_example.h"
 
