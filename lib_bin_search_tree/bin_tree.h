@@ -1,12 +1,14 @@
-#ifndef LIB_TBIN_TREE_H_
+/* #ifndef LIB_TBIN_TREE_H_
 #define LIB_TBIN_TREE_H_
 
 #include <iostream>
 #include <stdexcept>
 #include <algorithm> // для std::max
-
+template <typename T>
+class TBinSearchTree;
 template <typename T>
 class TreeNode {
+    friend class TBinSearchTree<T>;
     T value;              // Значение узла
     TreeNode* left;       // Левый потомок
     TreeNode* right;      // Правый потомок
@@ -106,4 +108,4 @@ TreeNode<T>& TreeNode<T>::operator=(const TreeNode<T>& node) {
     return *this;
 }
 
-#endif // LIB_TBIN_TREE_H_
+#endif // LIB_TBIN_TREE_H_ */

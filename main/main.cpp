@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <random>
 #include <chrono>
-#define ITERATOR
+#define HEAP
 
 #ifdef EASY_EXAMPLE
 #include <iomanip>
@@ -442,6 +442,55 @@ int main() {
         std::cout << *it << " ";
     }
     std::cout << std::endl;
+    return 0;
+}
+#endif
+#ifdef HEAP
+#include "../lib_heap/heap.h"
+#include "../lib_vector/vector.h"
+template <typename T>
+void sortMassivchettam(TVector<T>& arr, int k ){
+    Heap<int , true> minHeap(10); 
+
+    for (int i = 0; i <= k && i < arr.size(); ++i) {
+        minHeap.push_heap(arr[i]);
+    }
+
+    int index = 0;
+
+    for (int i = k + 1; i < arr.size(); ++i) {
+
+        arr[index++] = minHeap.top();
+        minHeap.pop_heap();
+
+        minHeap.push_heap(arr[i]);
+    }
+
+    while (!minHeap.is_empty()) {
+        arr[index++] = minHeap.top();
+        minHeap.pop_heap();
+    }
+}
+int main() {
+ TVector<int> arr;
+    arr.push_back(6);
+    arr.push_back(5);
+    arr.push_back(3);
+    arr.push_back(2);
+    arr.push_back(8);
+    arr.push_back(10);
+    arr.push_back(9);
+    
+    int k = 3;
+    
+    sortMassivchettam(arr, k);
+    
+
+    for (size_t i = 0; i < arr.size(); ++i) {
+        std::cout << arr[i] << " ";
+    }
+    // Вывод: 2 3 5 6 8 9 10
+    
     return 0;
 }
 #endif

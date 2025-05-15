@@ -1,1 +1,2 @@
 create_project_lib(TBSTable)
+add_depend(TBSTable BinSearchTree lib_bin_search_tree)
